@@ -11,4 +11,4 @@ Verify the checksum after downloading.
 
 | File | Version | Size | Form | Release |
 |---|---|---|---|---|
-| Jaspersoft Studio Community Edition, Windows x86_64 (`js-studiocomm_7.0.8_windows_x86_64.zip`) | 7.0.8 | 542 MB | 8 parts (`.zip.001` … `.zip.008`, join with 7-Zip / WinRAR / `copy /b`) + `SHA256SUMS` | [jaspersoft-studio-7.0.8](https://github.com/namdarim/mirror/releases/tag/jaspersoft-studio-7.0.8) |
+| Jaspersoft Studio Community Edition, Windows x86_64 (`js-studiocomm_7.0.8_windows_x86_64.zip`) | 7.0.8 | 542 MB | single zip, plus the same zip in 8 parts (`.zip.001` … `.zip.008`) + `SHA256SUMS` | [jaspersoft-studio-7.0.8](https://github.com/namdarim/mirror/releases/tag/jaspersoft-studio-7.0.8) |
