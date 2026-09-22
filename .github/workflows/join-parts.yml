@@ -1,0 +1,46 @@
+# Joins the split parts of a release asset on a GitHub runner (fast link, no external
+# credentials: the workflow's own token has contents:write on this repo) and uploads
+# the joined file to the same release. Run manually from the Actions tab or with
+#   gh workflow run join-parts.yml -f tag=<tag> -f file=<name> -f sha256=<hash>
+name: join-parts
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag holding the parts
+        required: true
+      file:
+        description: Name of the joined file (parts are <file>.001, .002, ...)
+        required: true
+      sha256:
+        description: Expected SHA-256 of the joined file
+        required: true
+permissions:
+  contents: write
+jobs:
+  join:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag }}
+      FILE: ${{ inputs.file }}
+      SHA256: ${{ inputs.sha256 }}
+    steps:
+      - name: Download parts
+        run: |
+          mkdir work && cd work
+          gh release download "$TAG" --pattern "$FILE.0*" --pattern SHA256SUMS
+          ls -l
+      - name: Verify parts, join, verify whole
+        run: |
+          cd work
+          grep -E "  $FILE\.[0-9]{3}\$" SHA256SUMS | sha256sum -c -
+          cat "$FILE".0?? > "$FILE"
+          echo "$SHA256  $FILE" | sha256sum -c -
+          ls -l "$FILE"
+      - name: Upload joined file to the release
+        run: |
+          cd work
+          gh release upload "$TAG" "$FILE" --clobber
+          gh release view "$TAG" --json assets --jq '.assets[] | "\(.name) \(.size) \(.state)"'
